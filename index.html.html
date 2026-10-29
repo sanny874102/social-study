@@ -63,6 +63,31 @@
       border-radius: 8px;
     }
 
+    .share-bar {
+      margin-top: 15px;
+      padding: 12px;
+      background: #e0f2fe;
+      border-radius: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.95rem;
+    }
+
+    .share-input {
+      width: 100%;
+      max-width: 360px;
+      padding: 8px 12px;
+      border: 1px solid #bae6fd;
+      border-radius: 6px;
+      background: #ffffff;
+      color: #0369a1;
+      font-family: monospace;
+      font-size: 0.95rem;
+    }
+
     select, button {
       font-size: 1rem;
       padding: 10px 16px;
@@ -82,6 +107,17 @@
 
     button.btn-primary:hover {
       background-color: var(--primary-hover);
+    }
+
+    button.btn-share {
+      padding: 8px 16px;
+      background: #0284c7;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
     }
 
     .question-type-badge {
@@ -195,6 +231,13 @@
       </select>
       <button class="btn-primary" onclick="startQuiz()">開始新測驗</button>
     </div>
+
+    <!-- 專屬網址顯示與一鍵複製列 -->
+    <div class="share-bar">
+      <span>🌐 <strong>分享測驗網址：</strong></span>
+      <input type="text" id="currentUrlInput" class="share-input" readonly />
+      <button onclick="copyProjectUrl()" id="copyUrlBtn" class="btn-share">🔗 複製網址</button>
+    </div>
   </div>
 
   <!-- 成績結算區 (預設隱藏) -->
@@ -213,6 +256,11 @@
 </div>
 
 <script>
+// ==========================================
+// 0. 專案網址設定 (可依需求調整)
+// ==========================================
+const OFFICIAL_URL = 'https://sanny874102.github.io/social-study/';
+
 // ==========================================
 // 1. 大題庫資料結構 (整合甲卷與乙卷共 69 題)
 // ==========================================
@@ -396,7 +444,6 @@ const QUESTION_BANK = [
   }
 ];
 
-// 保存當前測驗抽出的題目陣列
 let currentQuestions = [];
 
 // ==========================================
@@ -446,18 +493,14 @@ function renderQuestions() {
     card.className = 'question-card';
     card.id = `q-card-${index}`;
 
-    // 題型標籤與來源
     let html = `<span class="question-type-badge">${getTypeName(item.type)}（出處：${item.source}）</span>`;
 
-    // 若有閱讀測驗短文則顯示
     if (item.passage) {
       html += `<div class="passage-box">${item.passage}</div>`;
     }
 
-    // 題目文字
     html += `<div class="question-title">${index + 1}. ${item.q}</div>`;
 
-    // 根據不同題型渲染作答元件
     if (item.type === 'tf') {
       html += `
         <div class="options-list">
@@ -498,7 +541,6 @@ function renderQuestions() {
       html += `</div>`;
     }
 
-    // 批改結果與解析回饋區
     html += `<div id="feedback_${index}" class="feedback-box"></div>`;
 
     card.innerHTML = html;
@@ -535,13 +577,11 @@ function submitQuiz() {
       if (checkedBoxes.length > 0) {
         userAnsText = checkedBoxes.join('、');
       }
-      // 比對兩個陣列是否完全相同
       const sortedUser = [...checkedBoxes].sort();
       const sortedAns = [...item.answer].sort();
       isCorrect = (sortedUser.length === sortedAns.length) && sortedUser.every((val, i) => val === sortedAns[i]);
     }
 
-    // 更新統計與顯示回饋
     feedbackEl.style.display = 'block';
     const stdAnsText = Array.isArray(item.answer) ? item.answer.join('、') : item.answer;
     const expText = item.exp ? `<br><small>💡 補充解析：${item.exp}</small>` : '';
@@ -556,7 +596,6 @@ function submitQuiz() {
     }
   });
 
-  // 計算總分並顯示結算卡片
   const finalScore = Math.round((correctCount / total) * 100);
   document.getElementById('scoreText').innerText = `測驗得分：${finalScore} 分`;
   document.getElementById('accuracyText').innerText = `答對題數：${correctCount} 題 ／ 共 ${total} 題`;
@@ -565,8 +604,43 @@ function submitQuiz() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// 網頁載入時預設啟動一次測驗
-window.onload = startQuiz;
+// ==========================================
+// 4. 顯示並複製 sanny874102/social-study 網址邏輯
+// ==========================================
+function initUrlDisplay() {
+  const urlInput = document.getElementById('currentUrlInput');
+  // 若在線上環境則讀取當前網址，若在本地端預覽則直接顯示你的 GitHub Pages 官方網址
+  if (window.location.href.startsWith('http')) {
+    urlInput.value = window.location.href;
+  } else {
+    urlInput.value = OFFICIAL_URL;
+  }
+}
+
+function copyProjectUrl() {
+  const urlInput = document.getElementById('currentUrlInput');
+  const copyBtn = document.getElementById('copyUrlBtn');
+
+  navigator.clipboard.writeText(urlInput.value).then(() => {
+    copyBtn.innerText = '✅ 已複製！';
+    copyBtn.style.backgroundColor = '#16a34a';
+    
+    setTimeout(() => {
+      copyBtn.innerText = '🔗 複製網址';
+      copyBtn.style.backgroundColor = '#0284c7';
+    }, 2000);
+  }).catch(() => {
+    urlInput.select();
+    document.execCommand('copy');
+    alert('已複製網址：' + urlInput.value);
+  });
+}
+
+// 網頁載入時初始化測驗與網址列
+window.onload = function() {
+  startQuiz();
+  initUrlDisplay();
+};
 </script>
 
 </body>
