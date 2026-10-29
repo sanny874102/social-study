@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>國小五年級社會科（第1、2單元）線上大題庫測驗</title>
+  <style>
+    :root {
+      --primary-color: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-color: #1e293b;
+      --correct-color: #16a34a;
+      --correct-bg: #dcfce7;
+      --wrong-color: #dc2626;
+      --wrong-bg: #fee2e2;
+    }
+
+    body {
+      font-family: "Microsoft JhengHei", "PingFang TC", sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 850px;
+      margin: 0 auto;
+    }
+
+    .header-card, .question-card, .result-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      margin-top: 0;
+      color: var(--primary-color);
+      font-size: 1.8rem;
+      text-align: center;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #64748b;
+      margin-bottom: 20px;
+    }
+
+    .control-panel {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+      align-items: center;
+      background: #f1f5f9;
+      padding: 16px;
+      border-radius: 8px;
+    }
+
+    select, button {
+      font-size: 1rem;
+      padding: 10px 16px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      font-family: inherit;
+    }
+
+    button.btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+
+    button.btn-primary:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .question-type-badge {
+      display: inline-block;
+      background: #e0e7ff;
+      color: #3730a3;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .passage-box {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      padding: 12px 16px;
+      margin-bottom: 15px;
+      font-size: 0.95rem;
+      color: #78350f;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .question-title {
+      font-size: 1.15rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-label {
+      display: flex;
+      align-items: center;
+      padding: 10px 14px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .option-label:hover {
+      background: #f1f5f9;
+    }
+
+    .option-label input {
+      margin-right: 12px;
+      transform: scale(1.2);
+    }
+
+    .dropdown-select {
+      width: 100%;
+      max-width: 400px;
+      padding: 10px;
+      font-size: 1rem;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+    }
+
+    .feedback-box {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 8px;
+      display: none;
+      font-weight: bold;
+    }
+
+    .feedback-correct {
+      background-color: var(--correct-bg);
+      color: var(--correct-color);
+      border: 1px solid #86efac;
+    }
+
+    .feedback-wrong {
+      background-color: var(--wrong-bg);
+      color: var(--wrong-color);
+      border: 1px solid #fca5a5;
+    }
+
+    .score-display {
+      font-size: 2.2rem;
+      font-weight: bold;
+      text-align: center;
+      color: var(--primary-color);
+      margin: 10px 0;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- 頂部設定與控制區 -->
+  <div class="header-card">
+    <h1>📚 五年級社會科 線上練習大題庫</h1>
+    <p class="subtitle">範圍：翰林版 五上 第1、2單元（整合甲卷、乙卷完整題庫）</p>
+    
+    <div class="control-panel">
+      <label for="quizMode"><strong>選擇測驗模式：</strong></label>
+      <select id="quizMode">
+        <option value="all">挑戰全部題庫（共 69 題）</option>
+        <option value="25">隨機抽選 25 題（快速測驗）</option>
+        <option value="10">隨機抽選 10 題（每日小練）</option>
+      </select>
+      <button class="btn-primary" onclick="startQuiz()">開始新測驗</button>
+    </div>
+  </div>
+
+  <!-- 成績結算區 (預設隱藏) -->
+  <div id="resultCard" class="result-card hidden">
+    <div class="score-display" id="scoreText">得分：100 分</div>
+    <p style="text-align: center;" id="accuracyText">答對題數：0 / 0</p>
+  </div>
+
+  <!-- 題目渲染區 -->
+  <div id="quizContainer"></div>
+
+  <!-- 底部交卷按鈕 -->
+  <div id="submitSection" class="header-card hidden" style="text-align: center;">
+    <button class="btn-primary" style="font-size: 1.2rem; padding: 14px 40px;" onclick="submitQuiz()">📝 交卷並查看解析</button>
+  </div>
+</div>
+
+<script>
+// ==========================================
+// 1. 大題庫資料結構 (整合甲卷與乙卷共 69 題)
+// ==========================================
+const QUESTION_BANK = [
+  // --- 甲卷：是非題 ---
+  { type: 'tf', source: '甲卷', q: '我們生活的世界可以分為六大洲，包含亞洲、美洲、歐洲、非洲、大洋洲與北極洲。', answer: 'X', exp: '世界分為五大洲，不含北極洲。' },
+  { type: 'tf', source: '甲卷', q: '西班牙傳教士在基隆和平島建立教堂，傳播天主教。', answer: 'O', exp: '正確。' },
+  { type: 'tf', source: '甲卷', q: '目前經政府認定在臺灣的原住民族有十四個族群。', answer: 'X', exp: '目前經政府認定的原住民族有十六個族群。' },
+  { type: 'tf', source: '甲卷', q: '三貂角地名是由西班牙語聖地牙哥發音轉化而來。', answer: 'O', exp: '正確。' },
+  { type: 'tf', source: '甲卷', q: '臺灣與菲律賓距離很近，隔著臺灣海峽。', answer: 'X', exp: '臺灣與菲律賓之間隔著「巴士海峽」。' },
+  { type: 'tf', source: '甲卷', q: '臺灣位於南亞海運的中途要道，吸引各族群來此建立據點，臺灣自十六世紀登上國際舞臺。', answer: 'X', exp: '臺灣位於「東亞」海運的中途要道。' },
+  { type: 'tf', source: '甲卷', q: '用來驅邪祈福的劍獅，據說其形象源於鄭氏軍隊在盾牌上畫的獅面。', answer: 'O', exp: '正確。' },
+  { type: 'tf', source: '甲卷', q: '原住民族順應自然環境而生活，像是泰雅族會將竹子建造成房屋或編織為竹器。', answer: 'O', exp: '正確。' },
+  { type: 'tf', source: '甲卷', q: '新石器時代的人們開始將石頭磨製成石器，並從事農耕。', answer: 'O', exp: '正確。' },
+  { type: 'tf', source: '甲卷', q: '長濱遺址的人們主要以跨海交易維生。', answer: 'X', exp: '長濱遺址屬於舊石器時代，主要靠捕捉海中生物、採集植物與狩獵維生。' },
+
+  // --- 乙卷：是非題 ---
+  { type: 'tf', source: '乙卷', q: '臺南孔廟被稱為「全臺首學」，是清帝國統治臺灣後建立的第一座孔廟。', answer: 'X', exp: '臺南孔廟是「鄭氏政權」時期建立的。' },
+  { type: 'tf', source: '乙卷', q: '鄭成功在西元1662年驅逐西班牙人，在臺建立政權。', answer: 'X', exp: '鄭成功驅逐的是「荷蘭人」。' },
+  { type: 'tf', source: '乙卷', q: '雅美族(達悟族)人只在每年3～10月食用飛魚，讓飛魚不因人類捕食而滅絕。', answer: 'O', exp: '正確。' },
+  { type: 'tf', source: '乙卷', q: '南海與臺灣海峽相連，是臺灣與日本間的重要海域。', answer: 'X', exp: '臺灣與日本間的重要海域是「東海」。' },
+  { type: 'tf', source: '乙卷', q: '泰雅族舉行小米祈福祭儀時，由祭司為族人祈福。', answer: 'X', exp: '是由「頭目」為族人祈福。' },
+  { type: 'tf', source: '乙卷', q: '荷蘭人離開臺灣後，原住民族依舊使用羅馬字母作為書寫工具。', answer: 'O', exp: '正確（即新港文書）。' },
+  { type: 'tf', source: '乙卷', q: '荷蘭人從中國招募漢人來臺開墾，再將蔗糖、鹿皮等轉賣到他國。', answer: 'O', exp: '正確。' },
+  { type: 'tf', source: '乙卷', q: '史前時代的新石器時代，人們仍只會狩獵與採集植物。', answer: 'X', exp: '新石器時代的人們已知從事農耕與飼養家畜。' },
+  { type: 'tf', source: '乙卷', q: '卑南遺址發現琉璃珠，顯示當時已有跨海交易。', answer: 'X', exp: '發現東南亞琉璃珠並顯示有跨海交易的是「十三行遺址」。' },
+  { type: 'tf', source: '乙卷', q: '早期臺灣的建築設計會考量氣候，例如：老街的騎樓提供了遮風避雨的功能。', answer: 'O', exp: '正確。' },
+
+  // --- 甲卷：選擇題 ---
+  { type: 'mc', source: '甲卷', q: '臺灣適合向東亞各國進行交流或發展貿易，主要是因為下列哪一項因素？', options: ['臺灣四面環海，地理位置適中', '與東亞各國語言相同，容易溝通', '臺灣製造的產品價格便宜品質好', '彼此陸地相連'], answer: '臺灣四面環海，地理位置適中' },
+  { type: 'mc', source: '甲卷', q: '臺灣在大航海時代崛起的主要原因是什麼？', options: ['物產豐富', '位於航運要道', '土地肥沃', '人口稀少'], answer: '位於航運要道' },
+  { type: 'mc', source: '甲卷', q: '西班牙人佔領淡水後，建造了第二座城堡，後來荷蘭人趕走西班牙人後，在原址重建城堡，就是今日的哪裡？', options: ['聖多明哥城', '聖薩爾瓦多城', '熱蘭遮城', '普羅民遮城'], answer: '聖多明哥城' },
+  { type: 'mc', source: '甲卷', q: '西元十六世紀，歐洲國家來到亞洲的主要目的是什麼？', options: ['探索新大陸', '建立軍事據點', '貿易與獲取資源', '研究新生物物種'], answer: '貿易與獲取資源' },
+  { type: 'mc', source: '甲卷', q: '如何描述臺灣島的地理位置？', options: ['位於亞洲大陸的東側、太平洋的西側', '位於亞洲大陸的西側、太平洋的東側', '位於亞洲大陸的北側、太平洋的西側', '位於太平洋的南側、亞洲大陸的東側'], answer: '位於亞洲大陸的東側、太平洋的西側' },
+  { type: 'mc', source: '甲卷', q: '下列哪一項較可能是來自卑南遺址出土的文物？', options: ['鐮刀', '琉璃珠', '石板棺', '鐵器'], answer: '石板棺' },
+  { type: 'mc', source: '甲卷', q: '下列哪一個原住民族主要居住在臺東縣蘭嶼鄉？', options: ['阿美族', '泰雅族', '雅美族(達悟族)', '邵族'], answer: '雅美族(達悟族)' },
+  { type: 'mc', source: '甲卷', q: '下列關於史前時代的敘述，哪一項錯誤？', options: ['舊石器時代已知用火', '新石器時代發展農業聚落', '金屬器時代開始煉製鐵器', '長濱遺址的人們生活在地下屋'], answer: '長濱遺址的人們生活在地下屋' },
+  { type: 'mc', source: '甲卷', q: '下列哪項不是原住民族生態保育的智慧？', options: ['不可獵殺幼小動物', '限制狩獵時間', '共享與互助的文化', '捕魚時，不將飛魚一網打盡'], answer: '共享與互助的文化' },
+  { type: 'mc', source: '甲卷', q: '荷蘭人將什麼動、植物引入臺灣？', options: ['茶葉、黃牛', '龍眼、甘蔗', '土芒果、黃牛', '龍眼、土芒果'], answer: '土芒果、黃牛' },
+
+  // --- 乙卷：選擇題 ---
+  { type: 'mc', source: '乙卷', q: '夏季時，臺灣因什麼季風帶來溫暖潮溼的風與大量降雨，對農業與日常生活有重要的影響？', options: ['東北季風', '西北季風', '東南季風', '西南季風'], answer: '西南季風' },
+  { type: 'mc', source: '乙卷', q: '荷蘭人在臺灣建立的兩座城堡名稱是什麼？', options: ['熱蘭遮城與聖多明哥城', '普羅民遮城與聖薩爾瓦多城', '聖多明哥城與普羅民遮城', '普羅民遮城與熱蘭遮城'], answer: '普羅民遮城與熱蘭遮城' },
+  { type: 'mc', source: '乙卷', q: '荷蘭傳教士如何傳教？', options: ['設立學校和教堂', '招募原住民族開墾', '與中國商人交易', '以上皆是'], answer: '設立學校和教堂' },
+  { type: 'mc', source: '乙卷', q: '鄭成功來到臺灣後，在臺南設立什麼，作為行政中心？', options: ['王爺府', '承天府', '代天府', '赤嵌府'], answer: '承天府' },
+  { type: 'mc', source: '乙卷', q: '我們可以藉由什麼方式來推測臺灣史前時代人類的生活方式？', options: ['求神問卜', '憑空想像', '出土的文物', '參考其他國家的博物館'], answer: '出土的文物' },
+  { type: 'mc', source: '乙卷', q: '清帝國派誰帶兵進攻臺灣，將臺灣納入清帝國版圖？', options: ['劉銘傳', '施琅', '鄭經', '沈葆楨'], answer: '施琅' },
+  { type: 'mc', source: '乙卷', q: '下列哪一項是東北季風對臺灣的影響？', options: ['帶來夏季炎熱的氣候', '影響南部冬季使降雨量變少', '增加中部降雨機會', '提高北部與東北部冬季降雨機率'], answer: '提高北部與東北部冬季降雨機率' },
+  { type: 'mc', source: '乙卷', q: '在大航海時代，歐洲航海家偶然航行至東亞地區，經過臺灣時，深受島上美麗景色吸引，於是在地圖上記錄此地，並賦予這座島嶼什麼名稱？', options: ['澎湖群島', '福爾摩沙', '臺灣島', '金門群島'], answer: '福爾摩沙' },
+  { type: 'mc', source: '乙卷', q: '因為追逐白鹿而發現饒富魚蝦的日月潭，於是全族搬到這裡定居。這是哪一個原住民族的神話傳說？', options: ['邵族', '賽德克族', '雅美族(達悟族)', '西拉雅族'], answer: '邵族' },
+  { type: 'mc', source: '乙卷', q: '新石器時代因為什麼原因，帶動人口成長形成聚落？', options: ['石器製作', '文字發明', '食物取得漸趨穩定', '跨國貿易興盛'], answer: '食物取得漸趨穩定' },
+
+  // --- 甲卷：人物與事蹟配對 (下拉選單) ---
+  { type: 'dropdown', source: '甲卷', q: '【人物與事蹟配對】在臺南建立熱蘭遮城。', options: ['顏思齊', '鄭成功', '荷蘭人', '西班牙人'], answer: '荷蘭人' },
+  { type: 'dropdown', source: '甲卷', q: '【人物與事蹟配對】傳說從北港登陸臺灣，開墾雲林、嘉義一帶。', options: ['顏思齊', '鄭成功', '荷蘭人', '西班牙人'], answer: '顏思齊' },
+  { type: 'dropdown', source: '甲卷', q: '【人物與事蹟配對】於西元1662年將荷蘭人趕出臺灣。', options: ['顏思齊', '鄭成功', '荷蘭人', '西班牙人'], answer: '鄭成功' },
+  { type: 'dropdown', source: '甲卷', q: '【人物與事蹟配對】派兵進入臺灣的北部，在今日的基隆、淡水等地建立據點。', options: ['顏思齊', '鄭成功', '荷蘭人', '西班牙人'], answer: '西班牙人' },
+
+  // --- 甲卷：史前遺址配對 (下拉選單) ---
+  { type: 'dropdown', source: '甲卷', q: '【史前遺址特色】屬於舊石器時代的史前遺址，已知用火燒烤食物。', options: ['卑南遺址', '十三行遺址', '長濱遺址'], answer: '長濱遺址' },
+  { type: 'dropdown', source: '甲卷', q: '【史前遺址特色】用石刀收割農作物、使用石板組成石棺。', options: ['卑南遺址', '十三行遺址', '長濱遺址'], answer: '卑南遺址' },
+  { type: 'dropdown', source: '甲卷', q: '【史前遺址特色】出土來自東南亞的琉璃珠，顯示有跨海交易。', options: ['卑南遺址', '十三行遺址', '長濱遺址'], answer: '十三行遺址' },
+  { type: 'dropdown', source: '甲卷', q: '【史前遺址特色】這個遺址的人們主要以敲擊的方式製作石器。', options: ['卑南遺址', '十三行遺址', '長濱遺址'], answer: '長濱遺址' },
+  { type: 'dropdown', source: '甲卷', q: '【史前遺址特色】屬於新石器時代的史前遺址，曾出土兩個把手的陶罐。', options: ['卑南遺址', '十三行遺址', '長濱遺址'], answer: '卑南遺址' },
+  { type: 'dropdown', source: '甲卷', q: '【史前遺址特色】為金屬器時代的代表遺址，顯示當時已有煉鐵技術。', options: ['卑南遺址', '十三行遺址', '長濱遺址'], answer: '十三行遺址' },
+
+  // --- 甲卷：歷史事件影響配對 (下拉選單) ---
+  { type: 'dropdown', source: '甲卷', q: '【歷史事件影響】臺灣成為商品貿易的轉運站，並與其他國家交易絲織品、銀與香料。', options: ['荷蘭人來臺', '西班牙人來臺', '鄭氏政權來臺'], answer: '荷蘭人來臺' },
+  { type: 'dropdown', source: '甲卷', q: '【歷史事件影響】開啟漢人為主的社會發展。', options: ['荷蘭人來臺', '西班牙人來臺', '鄭氏政權來臺'], answer: '鄭氏政權來臺' },
+  { type: 'dropdown', source: '甲卷', q: '【歷史事件影響】興建全臺第一座孔廟、設立學校，並選拔人才管理地方事務。', options: ['荷蘭人來臺', '西班牙人來臺', '鄭氏政權來臺'], answer: '鄭氏政權來臺' },
+  { type: 'dropdown', source: '甲卷', q: '【歷史事件影響】在和平島建造第一座城堡，作為貿易與士兵駐守的據點。', options: ['荷蘭人來臺', '西班牙人來臺', '鄭氏政權來臺'], answer: '西班牙人來臺' },
+
+  // --- 乙卷：臺灣氣候連連看 (改為下拉選單) ---
+  { type: 'dropdown', source: '乙卷', q: '【臺灣氣候配對】「夏季氣候」具有什麼溫度與降雨特徵？', options: ['A. 溼熱多雨', 'C. 北部氣候溼冷'], answer: 'A. 溼熱多雨' },
+  { type: 'dropdown', source: '乙卷', q: '【臺灣氣候配對】「夏季氣候」主要是受到哪一種季風影響？', options: ['B. 受西南季風影響', 'D. 受東北季風影響'], answer: 'B. 受西南季風影響' },
+  { type: 'dropdown', source: '乙卷', q: '【臺灣氣候配對】「冬季氣候」具有什麼溫度與降雨特徵？', options: ['A. 溼熱多雨', 'C. 北部氣候溼冷'], answer: 'C. 北部氣候溼冷' },
+  { type: 'dropdown', source: '乙卷', q: '【臺灣氣候配對】「冬季氣候」主要是受到哪一種季風影響？', options: ['B. 受西南季風影響', 'D. 受東北季風影響'], answer: 'D. 受東北季風影響' },
+
+  // --- 乙卷：史前時代特色配對 (下拉選單) ---
+  { type: 'dropdown', source: '乙卷', q: '【史前時代特色】用鐵製鋤頭種田，提高作物產量。', options: ['① 舊石器時代', '② 新石器時代', '③ 金屬器時代'], answer: '③ 金屬器時代' },
+  { type: 'dropdown', source: '乙卷', q: '【史前時代特色】開始運用石器從事農耕，種植芋頭與稻米等作物。', options: ['① 舊石器時代', '② 新石器時代', '③ 金屬器時代'], answer: '② 新石器時代' },
+  { type: 'dropdown', source: '乙卷', q: '【史前時代特色】以狩獵、採集植物維生，並敲擊石頭製成工具。', options: ['① 舊石器時代', '② 新石器時代', '③ 金屬器時代'], answer: '① 舊石器時代' },
+  { type: 'dropdown', source: '乙卷', q: '【史前時代特色】人們開始飼養家畜，形成聚落。', options: ['① 舊石器時代', '② 新石器時代', '③ 金屬器時代'], answer: '② 新石器時代' },
+  { type: 'dropdown', source: '乙卷', q: '【史前時代特色】這個時代的人們，除了捕捉海中生物維生，最早已知用火來燒烤食物及取暖。', options: ['① 舊石器時代', '② 新石器時代', '③ 金屬器時代'], answer: '① 舊石器時代' },
+
+  // --- 乙卷：原住民族文化傳統配對 (下拉選單) ---
+  { type: 'dropdown', source: '乙卷', q: '【原住民族文化智慧】部落祭典主要與狩獵和農業生產有關。', options: ['A. 取材自然', 'B. 共享互助', 'C. 歲時祭儀'], answer: 'C. 歲時祭儀' },
+  { type: 'dropdown', source: '乙卷', q: '【原住民族文化智慧】用竹子或木頭建造房屋。', options: ['A. 取材自然', 'B. 共享互助', 'C. 歲時祭儀'], answer: 'A. 取材自然' },
+  { type: 'dropdown', source: '乙卷', q: '【原住民族文化智慧】是穩定部落與凝聚族群的力量。', options: ['A. 取材自然', 'B. 共享互助', 'C. 歲時祭儀'], answer: 'B. 共享互助' },
+  { type: 'dropdown', source: '乙卷', q: '【原住民族文化智慧】利用竹子取水引水、製作食器。', options: ['A. 取材自然', 'B. 共享互助', 'C. 歲時祭儀'], answer: 'A. 取材自然' },
+  { type: 'dropdown', source: '乙卷', q: '【原住民族文化智慧】有共食團體分享獵物。', options: ['A. 取材自然', 'B. 共享互助', 'C. 歲時祭儀'], answer: 'B. 共享互助' },
+
+  // --- 甲卷：閱讀素養題 ---
+  {
+    type: 'mc', source: '甲卷',
+    passage: '【閱讀短文】阿翔的家住在臺灣西南沿海的漁村，家族世世代代以捕捉烏魚維生。每年冬季，當寒流從北方南下時，烏魚便會順著洋流洄游至臺灣海域。阿翔的長輩會根據天氣變化、海象與傳統經驗，準備漁具出海捕撈，展現對自然環境的敏銳觀察力。然而，近年來阿翔發現，冬天來的烏魚數量愈來愈少，這讓村裡的漁民開始擔心。他們討論後認為，這可能與全球暖化造成海水溫度上升有關，導致烏魚改變洄游的路線或來得比較晚。這也提醒了大家，自然環境的變化會影響人們的生活方式與產業發展。',
+    q: '阿翔家族的長輩會關注天氣變化，等待烏魚來到，這顯示他們對哪方面有較高的敏感度？',
+    options: ['海洋世界的永續發展', '當地政府的政策變動', '季節性天氣與生態變化', '當地慶典活動的安排'],
+    answer: '季節性天氣與生態變化'
+  },
+  {
+    type: 'mc', source: '甲卷',
+    passage: '【閱讀短文】同上篇（阿翔家族捕烏魚與全球暖化）。',
+    q: '近年來，阿翔發現冬季來到的烏魚數量變少，可能與全球暖化有關。下列哪一個因素最可能影響烏魚洄游的數量？',
+    options: ['洋流方向改變', '海水溫度上升', '捕魚技術進步', '北極冰塊融化'],
+    answer: '海水溫度上升'
+  },
+  {
+    type: 'mc', source: '甲卷',
+    passage: '【閱讀短文】同上篇（阿翔家族捕烏魚與全球暖化）。',
+    q: '阿翔的家族以捕捉烏魚維生，這屬於哪一種產業？',
+    options: ['製造業', '觀光業', '農業', '漁業'],
+    answer: '漁業'
+  },
+  {
+    type: 'mc', source: '甲卷',
+    passage: '【閱讀短文】同上篇（阿翔家族捕烏魚與全球暖化）。',
+    q: '從阿翔發現烏魚變少的情況來看，這段文章最可能想提醒我們什麼？',
+    options: ['氣候變遷會影響人們的生活與產業', '海洋生物不適合來臺灣', '烏魚不適合再食用', '漁村將被淘汰，不適合居住'],
+    answer: '氣候變遷會影響人們的生活與產業'
+  },
+
+  // --- 乙卷：閱讀素養題 ---
+  {
+    type: 'mc', source: '乙卷',
+    passage: '【閱讀短文】小美參觀了臺南的安平古堡和赤嵌樓，對於荷蘭人來臺建立貿易據點的歷史產生興趣。她想了解當時荷蘭人如何發展貿易，以及這段歷史對今日臺灣的影響。十六世紀時，荷蘭人利用臺灣的地理優勢發展國際貿易，當時主要輸出的商品是鹿皮與蔗糖。此外，荷蘭人要求原住民族服從命令，來控制當地資源與勞動力。這段歷史讓臺灣逐漸發展成多元文化的社會。',
+    q: '請問當時荷蘭人在臺灣發展貿易，最主要的輸出商品是什麼？',
+    options: ['鹿皮與蔗糖', '金礦與茶葉', '稻米與香蕉', '煤礦與玉米'],
+    answer: '鹿皮與蔗糖'
+  },
+  {
+    type: 'mc', source: '乙卷',
+    passage: '【閱讀短文】同上篇（小美參訪安平古堡與荷蘭貿易歷史）。',
+    q: '荷蘭人治理臺灣時，如何對待當地的原住民族？',
+    options: ['尊重他們的文化並能和平共處', '要求原住民族服從命令', '互不干涉彼此的貿易活動', '與原住民族共同發展臺灣貿易'],
+    answer: '要求原住民族服從命令'
+  },
+  {
+    type: 'mc', source: '乙卷',
+    passage: '【閱讀短文】同上篇（小美參訪安平古堡與荷蘭貿易歷史）。',
+    q: '小美參訪後反思，當時臺灣成為國際貿易的重要據點，對今日臺灣社會有何影響？',
+    options: ['讓臺灣成為多元文化的社會', '沒有很大的影響，現代貿易不會參考過去的經驗', '臺灣農業產業完全消失', '臺灣成為全球最大貿易國'],
+    answer: '讓臺灣成為多元文化的社會'
+  },
+
+  // --- 甲、乙卷：問答題改編為單選與複選題 ---
+  {
+    type: 'mc', source: '甲卷問答改編',
+    q: '為了適應多雨與炎熱的氣候，臺灣早期的老街設計了什麼空間，可以遮陽擋雨，方便民眾通行購物？',
+    options: ['騎樓', '地下屋', '石板屋', '高腳屋'],
+    answer: '騎樓'
+  },
+  {
+    type: 'checkbox', source: '甲卷問答改編',
+    q: '【複選題】下列哪些是臺灣各地居民因應氣候而發展出的「特色食品或建築」？（請選出 2 個正確答案）',
+    options: [
+      '新竹居民利用冬季的強風與日晒製作柿餅',
+      '臺東蘭嶼野銀舊部落防颱的地下屋建築',
+      '長濱遺址人們建造的現代鋼筋水泥高樓',
+      '荷蘭人為了防寒在臺南建造的冰屋'
+    ],
+    answer: ['新竹居民利用冬季的強風與日晒製作柿餅', '臺東蘭嶼野銀舊部落防颱的地下屋建築']
+  },
+  {
+    type: 'checkbox', source: '甲卷問答改編',
+    q: '【複選題】鄭氏政權派軍隊到臺灣許多地方從事農業開墾（屯田），下列哪些地名與當時軍隊駐守的歷史有關？（請選出 2 個正確答案）',
+    options: ['臺南新營', '高雄左營', '新北三貂角', '基隆和平島'],
+    answer: ['臺南新營', '高雄左營']
+  },
+  {
+    type: 'checkbox', source: '乙卷問答改編',
+    q: '【複選題】史前時代的人們如何運用自然資源維持生活？（請選出 2 個正確答案）',
+    options: ['捕捉海中生物維生', '運用石器從事農耕', '建立現代化大型鋼鐵工廠', '透過網路進行跨國金融交易'],
+    answer: ['捕捉海中生物維生', '運用石器從事農耕']
+  },
+  {
+    type: 'checkbox', source: '乙卷問答改編',
+    q: '【複選題】泰雅族長期以山林為生活環境，發展出哪些與自然和諧共處的生活方式？（請選出 2 個正確答案）',
+    options: ['狩獵時避免獵殺幼小動物', '只在特定季節狩獵，讓動物繁殖生長', '無限制地砍伐森林以擴大耕地', '使用大型機械全年無休捕撈飛魚'],
+    answer: ['狩獵時避免獵殺幼小動物', '只在特定季節狩獵，讓動物繁殖生長']
+  }
+];
+
+// 保存當前測驗抽出的題目陣列
+let currentQuestions = [];
+
+// ==========================================
+// 2. 測驗啟動與題目渲染邏輯
+// ==========================================
+function shuffleArray(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function startQuiz() {
+  const mode = document.getElementById('quizMode').value;
+  document.getElementById('resultCard').classList.add('hidden');
+  document.getElementById('submitSection').classList.remove('hidden');
+
+  if (mode === 'all') {
+    currentQuestions = [...QUESTION_BANK];
+  } else {
+    const count = parseInt(mode, 10);
+    currentQuestions = shuffleArray(QUESTION_BANK).slice(0, count);
+  }
+
+  renderQuestions();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function getTypeName(type) {
+  switch (type) {
+    case 'tf': return '是非題';
+    case 'mc': return '單選題';
+    case 'dropdown': return '下拉配合題';
+    case 'checkbox': return '複選題';
+    default: return '題目';
+  }
+}
+
+function renderQuestions() {
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = '';
+
+  currentQuestions.forEach((item, index) => {
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.id = `q-card-${index}`;
+
+    // 題型標籤與來源
+    let html = `<span class="question-type-badge">${getTypeName(item.type)}（出處：${item.source}）</span>`;
+
+    // 若有閱讀測驗短文則顯示
+    if (item.passage) {
+      html += `<div class="passage-box">${item.passage}</div>`;
+    }
+
+    // 題目文字
+    html += `<div class="question-title">${index + 1}. ${item.q}</div>`;
+
+    // 根據不同題型渲染作答元件
+    if (item.type === 'tf') {
+      html += `
+        <div class="options-list">
+          <label class="option-label">
+            <input type="radio" name="q_${index}" value="O"> ◯ 是（正確）
+          </label>
+          <label class="option-label">
+            <input type="radio" name="q_${index}" value="X"> ✕ 非（錯誤）
+          </label>
+        </div>
+      `;
+    } else if (item.type === 'mc') {
+      html += `<div class="options-list">`;
+      item.options.forEach(opt => {
+        html += `
+          <label class="option-label">
+            <input type="radio" name="q_${index}" value="${opt}"> ${opt}
+          </label>
+        `;
+      });
+      html += `</div>`;
+    } else if (item.type === 'dropdown') {
+      html += `<select class="dropdown-select" id="q_${index}">`;
+      html += `<option value="">-- 請點此選擇正確答案 --</option>`;
+      item.options.forEach(opt => {
+        html += `<option value="${opt}">${opt}</option>`;
+      });
+      html += `</select>`;
+    } else if (item.type === 'checkbox') {
+      html += `<div class="options-list">`;
+      item.options.forEach(opt => {
+        html += `
+          <label class="option-label">
+            <input type="checkbox" name="q_${index}" value="${opt}"> ${opt}
+          </label>
+        `;
+      });
+      html += `</div>`;
+    }
+
+    // 批改結果與解析回饋區
+    html += `<div id="feedback_${index}" class="feedback-box"></div>`;
+
+    card.innerHTML = html;
+    container.appendChild(card);
+  });
+}
+
+// ==========================================
+// 3. 交卷與自動批改邏輯
+// ==========================================
+function submitQuiz() {
+  let correctCount = 0;
+  const total = currentQuestions.length;
+
+  currentQuestions.forEach((item, index) => {
+    const feedbackEl = document.getElementById(`feedback_${index}`);
+    let isCorrect = false;
+    let userAnsText = '未作答';
+
+    if (item.type === 'tf' || item.type === 'mc') {
+      const selected = document.querySelector(`input[name="q_${index}"]:checked`);
+      if (selected) {
+        userAnsText = selected.value;
+        isCorrect = (selected.value === item.answer);
+      }
+    } else if (item.type === 'dropdown') {
+      const selectEl = document.getElementById(`q_${index}`);
+      if (selectEl && selectEl.value !== '') {
+        userAnsText = selectEl.value;
+        isCorrect = (selectEl.value === item.answer);
+      }
+    } else if (item.type === 'checkbox') {
+      const checkedBoxes = Array.from(document.querySelectorAll(`input[name="q_${index}"]:checked`)).map(cb => cb.value);
+      if (checkedBoxes.length > 0) {
+        userAnsText = checkedBoxes.join('、');
+      }
+      // 比對兩個陣列是否完全相同
+      const sortedUser = [...checkedBoxes].sort();
+      const sortedAns = [...item.answer].sort();
+      isCorrect = (sortedUser.length === sortedAns.length) && sortedUser.every((val, i) => val === sortedAns[i]);
+    }
+
+    // 更新統計與顯示回饋
+    feedbackEl.style.display = 'block';
+    const stdAnsText = Array.isArray(item.answer) ? item.answer.join('、') : item.answer;
+    const expText = item.exp ? `<br><small>💡 補充解析：${item.exp}</small>` : '';
+
+    if (isCorrect) {
+      correctCount++;
+      feedbackEl.className = 'feedback-box feedback-correct';
+      feedbackEl.innerHTML = `✅ 答對了！標準答案：${stdAnsText}${expText}`;
+    } else {
+      feedbackEl.className = 'feedback-box feedback-wrong';
+      feedbackEl.innerHTML = `❌ 答錯了（你的作答：${userAnsText}）。<br>👉 正確答案應為：<strong>${stdAnsText}</strong>${expText}`;
+    }
+  });
+
+  // 計算總分並顯示結算卡片
+  const finalScore = Math.round((correctCount / total) * 100);
+  document.getElementById('scoreText').innerText = `測驗得分：${finalScore} 分`;
+  document.getElementById('accuracyText').innerText = `答對題數：${correctCount} 題 ／ 共 ${total} 題`;
+  document.getElementById('resultCard').classList.remove('hidden');
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// 網頁載入時預設啟動一次測驗
+window.onload = startQuiz;
+</script>
+
+</body>
+</html>
