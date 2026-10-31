@@ -21,7 +21,7 @@
             <h1 class="text-2xl md:text-3xl font-bold text-blue-600 flex items-center justify-center gap-2">
                 <i class="fa-solid fa-book-open"></i> 五年級社會科 線上練習大題庫
             </h1>
-            <p class="text-slate-600 text-sm md:text-base">範圍：翰林版 五上 第 1、2 單元（100% 完整收錄 5 份單元卷 + 期中考甲、乙卷所有題型）</p>
+            <p class="text-slate-600 text-sm md:text-base">範圍：翰林版 五上 第 1、2 單元（100% 完整收錄 5 份單元卷 + 期中考甲、乙卷，素養題組完整不切開）</p>
         </div>
 
         <div id="setup-screen" class="space-y-6">
@@ -32,12 +32,13 @@
                         <i class="fa-solid fa-list-check text-blue-500"></i> 選擇測驗題數：
                     </label>
                     <select id="question-count" class="w-full md:w-auto min-w-[260px] px-4 py-2.5 bg-white border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-700 font-medium">
-                        <option value="10">挑戰 10 題（快速隨機練習）</option>
-                        <option value="25">挑戰 25 題（精選中量測驗）</option>
-                        <option value="50">挑戰 50 題（考前實力衝刺）</option>
-                        <option value="all" selected>挑戰全部完整題庫（共 165 題）</option>
+                        <option value="10">挑戰約 10 題（快速隨機練習）</option>
+                        <option value="25">挑戰約 25 題（精選中量測驗）</option>
+                        <option value="50">挑戰約 50 題（考前實力衝刺）</option>
+                        <option value="all" selected>挑戰全部完整題庫（含完整素養題組）</option>
                     </select>
                 </div>
+                <p class="text-xs text-slate-500"><i class="fa-solid fa-wand-magic-sparkles text-amber-500 mr-1"></i>貼心設計：遇到「閱讀素養題組」時，系統會將整篇短文與所有子題完整保留在同一頁作答，絕不切開！</p>
             </div>
 
             <!-- 開始按鈕 -->
@@ -49,15 +50,15 @@
         <!-- 測驗進行畫面 (預設隱藏) -->
         <div id="quiz-screen" class="hidden space-y-6">
             <div class="flex justify-between items-center border-b pb-3">
-                <span id="progress-text" class="text-slate-500 font-medium">題目 1 / 10</span>
-                <span id="score-text" class="text-blue-600 font-bold">答對：0 題（目前得分：0 分）</span>
+                <span id="progress-text" class="text-slate-500 font-medium">第 1 / 10 頁</span>
+                <span id="score-text" class="text-blue-600 font-bold">答對：0 / 0 題（目前得分：0 分）</span>
             </div>
 
             <div id="question-container" class="space-y-4">
-                <!-- 動態載入題目 -->
+                <!-- 動態載入單題或完整題組 -->
             </div>
 
-            <!-- 詳解區 (作答後顯示) -->
+            <!-- 單題詳解區 (作答後顯示) -->
             <div id="explanation-box" class="hidden bg-sky-50 border border-sky-200 rounded-xl p-4 text-slate-700 space-y-1">
                 <div class="font-bold text-sky-800 flex items-center gap-1.5">
                     <i class="fa-solid fa-circle-info"></i> 觀念解析：
@@ -67,7 +68,7 @@
 
             <div class="flex justify-end pt-2">
                 <button id="next-btn" onclick="nextQuestion()" class="hidden px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow transition duration-200">
-                    下一題 <i class="fa-solid fa-arrow-right ml-1"></i>
+                    下一頁 <i class="fa-solid fa-arrow-right ml-1"></i>
                 </button>
             </div>
         </div>
@@ -100,8 +101,108 @@
     </div>
 
     <script>
-        // 完整收錄 7 份試卷（共 165 題）的題庫與詳解
+        // 完整題庫（支援單題 TF / MC 與 完整題組 GROUP）
         const allQuestions = [
+            // ================= 閱讀素養題組（完整不切開，共 3 大題組、11 小題） =================
+            {
+                type: "GROUP",
+                title: "閱讀素養題組（一）：飛行員發現史前煉鐵遺址",
+                passage: "西元1955年，有位飛行員駕機飛過北部時，發現飛機的羅盤顯示磁力異常，以為是發現了鐵礦，後來才知道是土法煉鐵所遺留的殘渣，並斷定這些殘渣為史前人類的煉鐵遺址。請問：",
+                subQuestions: [
+                    {
+                        type: "MC",
+                        q: "此一遺址是下列何者？",
+                        options: ["卑南遺址", "十三行遺址", "長濱遺址", "丸山遺址"],
+                        ans: 1,
+                        explanation: "位於新北市八里區的「十三行遺址」因出土煉鐵爐與鐵渣而聞名。"
+                    },
+                    {
+                        type: "MC",
+                        q: "下列哪一項不是此遺址的特徵？",
+                        options: ["已有跨海交易行為", "以農業、狩獵、捕魚維生", "會煉鐵", "以敲打石頭的方式製作石器"],
+                        ans: 3,
+                        explanation: "「以敲打石頭方式製作石器」是舊石器時代（長濱遺址）的特徵，十三行遺址已是金屬器時代。"
+                    },
+                    {
+                        type: "MC",
+                        q: "下列何者是此遺址最具特色的文物之一？",
+                        options: ["打製石器", "人面陶罐", "石板棺", "磨製石器"],
+                        ans: 1,
+                        explanation: "「人面陶罐」與琉璃珠是十三行遺址最具代表性的出土文物。"
+                    },
+                    {
+                        type: "MC",
+                        q: "臺灣史前時代的何種器物首見於此遺址？",
+                        options: ["金屬器", "陶器", "石器", "玉器"],
+                        ans: 0,
+                        explanation: "十三行遺址屬於金屬器時代，開始出現鐵器、銅器等「金屬器」。"
+                    }
+                ]
+            },
+            {
+                type: "GROUP",
+                title: "閱讀素養題組（二）：荷蘭人來臺貿易與影響",
+                passage: "小美參觀了臺南的安平古堡和赤嵌樓，對於荷蘭人來臺建立貿易據點的歷史產生興趣。她想了解當時荷蘭人如何發展貿易，以及這段歷史對今日臺灣的影響。\n\n十七世紀時，荷蘭人利用臺灣的地理優勢發展國際貿易，當時主要輸出的商品是鹿皮與蔗糖。此外，荷蘭人要求原住民族服從命令，來控制當地資源與勞動力。這段歷史讓臺灣逐漸發展成多元文化的社會。",
+                subQuestions: [
+                    {
+                        type: "MC",
+                        q: "請問當時荷蘭人在臺灣發展貿易，最主要的輸出商品是什麼？",
+                        options: ["鹿皮與蔗糖", "金礦與茶葉", "稻米與香蕉", "煤礦與玉米"],
+                        ans: 0,
+                        explanation: "荷蘭治臺時期最主要的兩大出口商品為「鹿皮」（銷往日本）與「蔗糖」。"
+                    },
+                    {
+                        type: "MC",
+                        q: "荷蘭人治理臺灣時，如何對待當地的原住民族？",
+                        options: ["尊重他們的文化並能和平共處", "要求原住民族服從命令", "互不干涉彼此的貿易活動", "與原住民族共同發展臺灣貿易"],
+                        ans: 1,
+                        explanation: "荷蘭人透過武力與地方會議「要求原住民族服從命令」，以控制當地資源與勞動力。"
+                    },
+                    {
+                        type: "MC",
+                        q: "小美參訪後反思，當時臺灣成為國際貿易的重要據點，對今日臺灣社會有何影響？",
+                        options: ["讓臺灣成為多元文化的社會", "沒有很大的影響，現代貿易不會參考過去的經驗", "臺灣農業產業完全消失", "臺灣成為全球最大貿易國"],
+                        ans: 0,
+                        explanation: "大航海時代各國族群與漢人來臺交流，讓臺灣逐漸發展成「多元文化的社會」。"
+                    }
+                ]
+            },
+            {
+                type: "GROUP",
+                title: "閱讀素養題組（三）：西南沿海烏魚洄游與氣候變遷",
+                passage: "阿翔的家住在臺灣西南沿海的漁村，家族世世代代以捕捉烏魚維生。每年冬季，當寒流從北方南下時，烏魚便會順著洋流洄游至臺灣海域。阿翔的長輩會根據天氣變化、海象與傳統經驗，準備漁具出海捕撈，展現對自然環境的敏銳觀察力。\n\n然而，近年來阿翔發現，冬天來的烏魚數量愈來愈少，這讓村裡的漁民開始擔心。他們討論後認為，這可能與全球暖化造成海水溫度上升有關，導致烏魚改變洄游的路線或來得比較晚。這也提醒了大家，自然環境的變化會影響人們的生活方式與產業發展。",
+                subQuestions: [
+                    {
+                        type: "MC",
+                        q: "阿翔家族的長輩會關注天氣變化，等待烏魚來到，這顯示他們對哪方面有較高的敏感度？",
+                        options: ["海洋世界的永續發展", "當地政府的政策變動", "季節性天氣與生態變化", "當地慶典活動的安排"],
+                        ans: 2,
+                        explanation: "漁民長輩觀察寒流、天氣與海象等待烏魚洄游，顯示對「季節性天氣與生態變化」有高度敏感度。"
+                    },
+                    {
+                        type: "MC",
+                        q: "近年來，阿翔發現冬季來到的烏魚數量變少，可能與全球暖化有關。下列哪一個因素最可能影響烏魚洄游的數量？",
+                        options: ["洋流方向改變", "海水溫度上升", "捕魚技術進步", "北極冰塊融化"],
+                        ans: 1,
+                        explanation: "全球暖化造成「海水溫度上升」，導致喜愛冷水的烏魚改變洄游路線或來得比較晚。"
+                    },
+                    {
+                        type: "MC",
+                        q: "阿翔的家族以捕捉烏魚維生，這屬於哪一種產業？",
+                        options: ["製造業", "觀光業", "農業", "漁業"],
+                        ans: 3,
+                        explanation: "出海捕撈烏魚屬於海洋「漁業」。"
+                    },
+                    {
+                        type: "MC",
+                        q: "從阿翔發現烏魚變少的情況來看，這段文章最可能想提醒我們什麼？",
+                        options: ["氣候變遷會影響人們的生活與產業", "海洋生物不適合來臺灣", "烏魚不適合再食用", "漁村將被淘汰，不適合居住"],
+                        ans: 0,
+                        explanation: "全球暖化導致烏魚減少、影響漁民生計，提醒我們「氣候變遷會影響人們的生活與產業」。"
+                    }
+                ]
+            },
+
             // ================= 一、是非題（整合 7 份考卷） =================
             // 1. 第1單元第1課：從地圖探索位置與發展有何關聯
             { type: "TF", q: "世界可以分為亞洲、美洲、歐洲、非洲與大洋洲五大洲，而我們所在的臺灣是亞洲的一部分。", ans: true, explanation: "世界分為五大洲，臺灣位於亞洲大陸東側，屬於亞洲的一部分。" },
@@ -245,7 +346,7 @@
             { type: "MC", q: "下列哪項不是原住民族生態保育的智慧？", options: ["不可獵殺幼小動物", "限制狩獵時間", "共享與互助的文化", "捕魚時，不將飛魚一網打盡"], ans: 2, explanation: "「共享與互助的文化」屬於社會組織與人際凝聚力，其餘三項則是直接保護自然資源的生態智慧。" },
             { type: "MC", q: "荷蘭人將什麼動、植物引入臺灣？", options: ["茶葉、黃牛", "龍眼、甘蔗", "土芒果、黃牛", "龍眼、土芒果"], ans: 2, explanation: "荷蘭人引進了「黃牛」協助耕作，並引進「土芒果」、豌豆、番茄等作物。" },
 
-            // ================= 三、勾選題、配合題、填充題、素養題與問答題（完整收錄） =================
+            // ================= 三、勾選題、配合題、填充題與問答題（完整收錄） =================
             // 1. 第1單元第1課 第三、四大題（黑面琵鷺與臺灣四周海域）
             { type: "TF", q: "【黑面琵鷺生態】黑面琵鷺主要分布於美洲地區。", ans: false, explanation: "黑面琵鷺主要分布於「東亞地區」，每年沿著東亞海岸線南北遷徙。" },
             { type: "TF", q: "【黑面琵鷺生態】黑面琵鷺屬於瀕臨絕種的保育類鳥類，黑色扁長的嘴巴（像琵琶或湯匙）是牠的特徵之一。", ans: true, explanation: "黑面琵鷺數量稀少，屬瀕臨絕種鳥類，有著黑色扁長如湯匙般的嘴喙。" },
@@ -255,14 +356,10 @@
             { type: "MC", q: "【認識臺灣四周海域】請問位於臺灣「北邊」（通往日本與南韓）的是哪一個海域？", options: ["太平洋", "巴士海峽", "臺灣海峽", "東海"], ans: 3, explanation: "臺灣北邊是「東海」。" },
             { type: "MC", q: "【認識臺灣四周海域】請問位於臺灣「南邊」（介於臺灣與菲律賓之間）的是哪一個海域？", options: ["太平洋", "巴士海峽", "臺灣海峽", "東海"], ans: 1, explanation: "臺灣南邊是「巴士海峽」。" },
 
-            // 2. 第1單元第2課 第三、四大題（卑南遺址與飛行員發現煉鐵遺址）
+            // 2. 第1單元第2課 第三大題（卑南遺址）
             { type: "TF", q: "【卑南遺址特色】卑南遺址屬於舊石器時代，當時尚未開始從事農耕。", ans: false, explanation: "卑南遺址屬於「新石器時代」，當時已經開始從事農耕（種植稻米、小米等）。" },
             { type: "TF", q: "【卑南遺址特色】卑南遺址曾出土為數不少的石板棺，可見當時已有較大規模的聚落。", ans: true, explanation: "卑南遺址出土上千具石板棺與建築遺跡，顯示當時已有規模龐大的定居聚落。" },
             { type: "TF", q: "【卑南遺址特色】卑南遺址出土大量的石刀，是用以切割作物的農具；且當時以磨製方式製造石器，並懂得製陶。", ans: true, explanation: "磨製石刀（收割農具）與雙把陶罐皆為新石器時代卑南遺址的重要出土文物。" },
-            { type: "MC", q: "【閱讀題組：煉鐵遺址】西元1955年，有位飛行員駕機飛過北部時，發現飛機的羅盤顯示磁力異常，以為是發現了鐵礦，後來才知道是土法煉鐵所遺留的殘渣，並斷定這些殘渣為史前人類的煉鐵遺址。請問此一遺址是下列何者？", options: ["卑南遺址", "十三行遺址", "長濱遺址", "丸山遺址"], ans: 1, explanation: "位於新北市八里區的「十三行遺址」因出土煉鐵爐與鐵渣而聞名。" },
-            { type: "MC", q: "【閱讀題組：煉鐵遺址】承上題，下列哪一項不是十三行遺址的特徵？", options: ["已有跨海交易行為", "以農業、狩獵、捕魚維生", "會煉鐵", "主要以敲打石頭的方式製作石器"], ans: 3, explanation: "「以敲打石頭方式製作石器」是舊石器時代（長濱遺址）的特徵，十三行遺址已是金屬器時代。" },
-            { type: "MC", q: "【閱讀題組：煉鐵遺址】下列何者是十三行遺址最具特色的文物之一？", options: ["打製石器", "人面陶罐", "石板棺", "雙把陶罐"], ans: 1, explanation: "「人面陶罐」與琉璃珠是十三行遺址最具代表性的出土文物。" },
-            { type: "MC", q: "【閱讀題組：煉鐵遺址】臺灣史前時代的何種器物首見於十三行遺址所屬的時代？", options: ["金屬器", "陶器", "石器", "玉器"], ans: 0, explanation: "十三行遺址屬於金屬器時代，開始出現鐵器、銅器等「金屬器」。" },
 
             // 3. 第1單元第3課 第三、四、五大題（原住民族神話傳說與文化認識）
             { type: "TF", q: "【神話與祭典】邵族的白鹿傳說敘述了先民依據自然資源遷徙與定居的過程。", ans: true, explanation: "邵族祖先追逐白鹿發現水草豐美、魚蝦豐富的日月潭而定居，反映了依自然資源遷徙的過程。" },
@@ -286,12 +383,9 @@
             { type: "TF", q: "【鄭氏時期情景】阿崗是生長於鄭氏政權時期的漢人移民，他在當時會看到「很多荷蘭人受到招募而來到臺灣開墾」。", ans: false, explanation: "當時受到招募來臺開墾的是中國東南沿海的「漢人」，而非荷蘭人。" },
             { type: "MC", q: "【大航海時代宗教】大航海時代是臺灣宗教齊發的時間點，下列哪一組是由「中國漢人移民」帶入臺灣的信仰神祇？", options: ["玄天上帝、媽祖", "基督教、天主教", "飛魚之神、祖靈", "阿拉、耶穌"], ans: 0, explanation: "漢人移民渡海來臺時，帶入了「媽祖、玄天上帝、保生大帝、開漳聖王」等傳統神祇信仰。" },
 
-            // 6. 期中考 乙卷 第三、四、五、六、七大題（氣候配對、素養題、史前與原住民代號、問答）
+            // 6. 期中考 乙卷 第三、五、六、七大題（氣候配對、史前與原住民代號、問答）
             { type: "MC", q: "【臺灣氣候特徵】關於臺灣「夏季氣候」的敘述，下列哪一組配對是正確的？", options: ["受西南季風影響、氣候溼熱多雨", "受東北季風影響、北部氣候溼冷", "受西南季風影響、全臺寒冷乾燥", "受東北季風影響、全臺炎熱少雨"], ans: 0, explanation: "臺灣夏季受「西南季風」影響，全臺普遍呈現「溼熱多雨」的氣候特徵。" },
             { type: "MC", q: "【臺灣氣候特徵】關於臺灣「冬季氣候」的敘述，下列哪一組配對是正確的？", options: ["受西南季風影響、氣候溼熱多雨", "受東北季風影響、北部氣候溼冷", "受東南季風影響、南部氣候溼冷", "受西北季風影響、全臺高溫多雨"], ans: 1, explanation: "臺灣冬季受「東北季風」影響，迎風面的「北部與東北部氣候溼冷」，中南部則溫暖少雨。" },
-            { type: "MC", q: "【閱讀素養題：荷蘭貿易】小美參觀了臺南的安平古堡和赤嵌樓，了解十六、十七世紀時荷蘭人利用臺灣地理優勢發展國際貿易。請問當時荷蘭人在臺灣發展貿易，最主要的輸出商品是什麼？", options: ["鹿皮與蔗糖", "金礦與茶葉", "稻米與香蕉", "煤礦與玉米"], ans: 0, explanation: "荷蘭治臺時期最主要的兩大出口商品為「鹿皮」（銷往日本）與「蔗糖」（銷往日本、波斯等地）。" },
-            { type: "MC", q: "【閱讀素養題：荷蘭貿易】荷蘭人治理臺灣時，如何對待當地的原住民族？", options: ["尊重他們的文化並能完全平等共處", "要求原住民族服從命令，以控制當地資源與勞動力", "互不干涉彼此的貿易活動", "與原住民族共同平分臺灣貿易利潤"], ans: 1, explanation: "荷蘭人透過武力與地方會議「要求原住民族服從命令」，以控制土地資源與勞動力。" },
-            { type: "MC", q: "【閱讀素養題：荷蘭貿易】小美參訪後反思，當時臺灣成為國際貿易的重要據點，對今日臺灣社會有何影響？", options: ["讓臺灣成為多元文化的社會", "沒有很大的影響，現代貿易不會參考過去經驗", "臺灣農業產業完全消失", "臺灣成為全球面積最大貿易國"], ans: 0, explanation: "大航海時代各國族群與漢人來臺交流，讓臺灣逐漸發展成「多元文化的社會」。" },
             { type: "MC", q: "【史前時代特色】「用鐵製鋤頭種田，提高作物產量。」這是哪一個史前時代的特色？", options: ["舊石器時代", "新石器時代", "金屬器時代", "文字時代"], ans: 2, explanation: "使用鐵製農具（鐵器）屬於「金屬器時代」的特色。" },
             { type: "MC", q: "【史前時代特色】「開始運用石器從事農耕，種植芋頭與稻米等作物，並開始飼養家畜，形成聚落。」這是哪一個史前時代的特色？", options: ["舊石器時代", "新石器時代", "金屬器時代", "資訊時代"], ans: 1, explanation: "從事農耕、飼養家畜並形成定居聚落，是「新石器時代」的特色。" },
             { type: "MC", q: "【史前時代特色】「以狩獵、採集植物及捕捉海中生物維生，敲擊石頭製成工具，且最早已知用火來燒烤食物及取暖。」這是哪一個史前時代的特色？", options: ["舊石器時代", "新石器時代", "金屬器時代", "大航海時代"], ans: 0, explanation: "敲擊製石、採集狩獵與最早已知用火，是「舊石器時代」的特色。" },
@@ -301,7 +395,7 @@
             { type: "MC", q: "【問答觀念：史前資源運用】史前時代的人們如何運用自然資源維持生活？下列哪一個例子正確？", options: ["捕捉海中生物維生，或運用石器從事農耕", "使用塑膠魚網捕魚，並駕駛動力漁船", "進口國外的罐頭食品維生", "利用網路查詢天氣再出海捕魚"], ans: 0, explanation: "史前人類善用自然資源，如在海邊捕捉魚貝類、在陸地採集狩獵，或用石器開墾從事農耕。" },
             { type: "MC", q: "【問答觀念：泰雅族生態智慧】泰雅族長期以山林為生活環境，發展出與自然和諧共處的生活方式，下列哪兩項是正確的例子？", options: ["狩獵時避免獵殺幼小動物、只在特定季節狩獵讓動物繁殖生長", "全年無休大量捕捉飛魚、建造地下屋防颱", "在日月潭追逐白鹿、完全不進行任何狩獵活動", "引進黃牛與荷蘭豆、大量開闢甘蔗園外銷"], ans: 0, explanation: "泰雅族遵守Gaga規範，狩獵時不獵殺幼小動物，並限制在秋冬季節（11~4月）狩獵，讓動物能繁衍生長。" },
 
-            // 7. 期中考 甲卷 第三、四、五、六、七大題（人物配對、遺址配對、烏魚素養題、事件影響、問答）
+            // 7. 期中考 甲卷 第三、四、六、七大題（人物配對、遺址配對、事件影響、問答）
             { type: "MC", q: "【歷史人物與事蹟】請問「在臺南建立熱蘭遮城」的是下列何者？", options: ["顏思齊", "鄭成功", "荷蘭人", "西班牙人"], ans: 2, explanation: "「荷蘭人」於1624年在臺南安平建立熱蘭遮城。" },
             { type: "MC", q: "【歷史人物與事蹟】請問「傳說從北港登陸臺灣，開墾雲林、嘉義一帶」的是下列何者？", options: ["顏思齊", "鄭成功", "荷蘭人", "西班牙人"], ans: 0, explanation: "海商「顏思齊」傳說從笨港（北港）登陸，率眾開墾雲嘉一帶。" },
             { type: "MC", q: "【歷史人物與事蹟】請問「於西元1662年將荷蘭人趕出臺灣」的是下列何者？", options: ["顏思齊", "鄭成功", "施琅", "西班牙人"], ans: 1, explanation: "「鄭成功」於1662年擊敗荷蘭人，在臺建立鄭氏政權。" },
@@ -309,10 +403,6 @@
             { type: "MC", q: "【史前遺址配對】「屬於舊石器時代的史前遺址，已知用火燒烤食物，且主要以敲擊的方式製作石器。」這是哪一個遺址？", options: ["卑南遺址", "十三行遺址", "長濱遺址", "芝山岩遺址"], ans: 2, explanation: "臺東「長濱遺址」屬舊石器時代，以敲擊製石、已知用火為特色。" },
             { type: "MC", q: "【史前遺址配對】「屬於新石器時代的史前遺址，用石刀收割農作物、使用石板組成石棺，並曾出土兩個把手的陶罐。」這是哪一個遺址？", options: ["卑南遺址", "十三行遺址", "長濱遺址", "八仙洞遺址"], ans: 0, explanation: "臺東「卑南遺址」屬新石器時代，以石刀、石板棺與雙把陶罐聞名。" },
             { type: "MC", q: "【史前遺址配對】「為金屬器時代的代表遺址，顯示當時已有煉鐵技術，並出土來自東南亞的琉璃珠，顯示有跨海交易。」這是哪一個遺址？", options: ["卑南遺址", "十三行遺址", "長濱遺址", "八仙洞遺址"], ans: 1, explanation: "新北八里「十三行遺址」屬金屬器時代，以煉鐵技術與跨海交易的琉璃珠著稱。" },
-            { type: "MC", q: "【閱讀素養題：烏魚與氣候】阿翔的家住在臺灣西南沿海的漁村，家族世代以捕捉烏魚維生。每年冬季寒流南下時，烏魚便順著洋流洄游至臺灣海域，長輩會根據天氣變化與海象準備出海。這顯示他們對哪方面有較高的敏感度？", options: ["海洋世界的永續發展", "當地政府的政策變動", "季節性天氣與生態變化", "當地慶典活動的安排"], ans: 2, explanation: "漁民長輩觀察寒流、天氣與海象等待烏魚洄游，顯示對「季節性天氣與生態變化」有高度敏感度。" },
-            { type: "MC", q: "【閱讀素養題：烏魚與氣候】近年來，阿翔發現冬季來到的烏魚數量變少，可能與全球暖化有關。下列哪一個因素最可能影響烏魚洄游的數量？", options: ["洋流方向完全改變", "海水溫度上升", "捕魚技術進步", "北極冰塊結冰"], ans: 1, explanation: "全球暖化造成「海水溫度上升」，導致喜愛冷水的烏魚改變洄游路線或延後南下。" },
-            { type: "MC", q: "【閱讀素養題：烏魚與氣候】阿翔的家族以捕捉烏魚維生，這屬於哪一種產業？", options: ["製造業", "觀光業", "農業", "漁業"], ans: 3, explanation: "出海捕撈烏魚屬於海洋「漁業」。" },
-            { type: "MC", q: "【閱讀素養題：烏魚與氣候】從阿翔發現烏魚變少的情況來看，這段文章最可能想提醒我們什麼？", options: ["氣候變遷會影響人們的生活與產業", "海洋生物完全不適合來臺灣", "烏魚已經有毒不適合再食用", "漁村將被淘汰，不適合居住"], ans: 0, explanation: "全球暖化導致烏魚減少、影響漁民生計，提醒我們「氣候變遷會影響人們的生活與產業」。" },
             { type: "MC", q: "【歷史事件影響】「臺灣成為商品貿易的轉運站，並與其他國家交易絲織品、銀與香料。」這主要是受到誰來臺的影響？", options: ["荷蘭人來臺", "西班牙人來臺", "鄭氏政權來臺", "史前人類遷徙"], ans: 0, explanation: "「荷蘭人來臺」將臺灣南部發展為東亞國際貿易的重要轉運站。" },
             { type: "MC", q: "【歷史事件影響】「開啟漢人為主的社會發展，並興建全臺第一座孔廟、設立學校，選拔人才管理地方事務。」這主要是受到誰來臺的影響？", options: ["荷蘭人來臺", "西班牙人來臺", "鄭氏政權來臺", "葡萄牙人航經"], ans: 2, explanation: "「鄭氏政權來臺」帶來大量漢人軍民屯墾，並興建孔廟、推行文教，奠定漢人社會發展基礎。" },
             { type: "MC", q: "【歷史事件影響】「在基隆和平島建造第一座城堡（聖薩爾瓦多城），作為貿易與士兵駐守的據點。」這主要是受到誰來臺的影響？", options: ["荷蘭人來臺", "西班牙人來臺", "鄭氏政權來臺", "施琅攻臺"], ans: 1, explanation: "「西班牙人來臺」首先在基隆和平島建造聖薩爾瓦多城。" },
@@ -320,22 +410,34 @@
             { type: "MC", q: "【問答觀念：鄭氏屯墾地名】鄭氏政權派軍隊到臺灣許多地方從事農業開墾活動，下列哪一組地名皆與當時鄭氏軍隊駐守屯墾的歷史有關？", options: ["臺南新營、高雄左營（及前鎮、林鳳營）", "新北三貂角、臺北士林", "基隆和平島、淡水紅毛城", "雲林北港、臺東長濱"], ans: 0, explanation: "臺南「新營、林鳳營」與高雄「左營、前鎮、後勁」等地名，皆源自鄭氏政權時期的軍隊屯墾鎮營名稱。" }
         ];
 
-        let currentQuizQuestions = [];
+        let currentQuizItems = [];
         let currentIndex = 0;
         let correctCount = 0;
-        let selectedOption = null;
+        let totalSubQuestionsCount = 0;
+        let answeredSubCountInCurrentItem = 0;
+
+        function getItemWeight(item) {
+            return item.type === "GROUP" ? item.subQuestions.length : 1;
+        }
 
         function startQuiz() {
             const countValue = document.getElementById('question-count').value;
             let shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
 
             if (countValue === "all") {
-                currentQuizQuestions = shuffled;
+                currentQuizItems = shuffled;
             } else {
-                const limit = parseInt(countValue);
-                currentQuizQuestions = shuffled.slice(0, limit);
+                const targetLimit = parseInt(countValue);
+                currentQuizItems = [];
+                let accumulated = 0;
+                for (let item of shuffled) {
+                    if (accumulated >= targetLimit) break;
+                    currentQuizItems.push(item);
+                    accumulated += getItemWeight(item);
+                }
             }
 
+            totalSubQuestionsCount = currentQuizItems.reduce((sum, item) => sum + getItemWeight(item), 0);
             currentIndex = 0;
             correctCount = 0;
 
@@ -347,44 +449,91 @@
         }
 
         function getCurrentScore() {
-            return Math.round((correctCount / currentQuizQuestions.length) * 100);
+            if (totalSubQuestionsCount === 0) return 0;
+            return Math.round((correctCount / totalSubQuestionsCount) * 100);
+        }
+
+        function updateScoreBoard() {
+            document.getElementById('progress-text').innerText = `進度：第 ${currentIndex + 1} / ${currentQuizItems.length} 頁`;
+            document.getElementById('score-text').innerText = `答對：${correctCount} / ${totalSubQuestionsCount} 題（目前得分：${getCurrentScore()} 分）`;
         }
 
         function loadQuestion() {
-            selectedOption = null;
+            answeredSubCountInCurrentItem = 0;
             document.getElementById('next-btn').classList.add('hidden');
             document.getElementById('explanation-box').classList.add('hidden');
             
-            const qData = currentQuizQuestions[currentIndex];
-            document.getElementById('progress-text').innerText = `題目 ${currentIndex + 1} / ${currentQuizQuestions.length}`;
-            document.getElementById('score-text').innerText = `答對：${correctCount} 題（目前得分：${getCurrentScore()} 分）`;
+            const qData = currentQuizItems[currentIndex];
+            updateScoreBoard();
 
             const container = document.getElementById('question-container');
             
-            if (qData.type === "TF") {
+            // 1. 處理「閱讀素養題組（GROUP）」：文章與所有子題同頁呈現，絕不切開
+            if (qData.type === "GROUP") {
+                let subQuestionsHtml = '';
+                qData.subQuestions.forEach((subQ, sIdx) => {
+                    let optionsHtml = '';
+                    subQ.options.forEach((opt, optIdx) => {
+                        optionsHtml += `
+                            <button onclick="checkGroupSubAnswer(${sIdx}, ${optIdx}, this)" class="sub-btn-${sIdx} w-full text-left p-3.5 bg-slate-50 hover:bg-blue-50 border border-slate-200 rounded-xl font-medium text-slate-700 transition flex items-center gap-3">
+                                <span class="w-7 h-7 rounded-full bg-white border border-slate-300 flex items-center justify-center font-bold text-slate-500 shrink-0 text-sm">${optIdx + 1}</span>
+                                <span>${opt}</span>
+                            </button>
+                        `;
+                    });
+
+                    subQuestionsHtml += `
+                        <div class="bg-white border border-slate-200 rounded-xl p-4 md:p-5 shadow-sm space-y-3">
+                            <h4 class="text-base md:text-lg font-bold text-slate-800">（第 ${sIdx + 1} 小題）${subQ.q}</h4>
+                            <div class="space-y-2.5">
+                                ${optionsHtml}
+                            </div>
+                            <div id="sub-exp-${sIdx}" class="hidden bg-sky-50 border border-sky-200 rounded-lg p-3 text-slate-700 text-sm mt-2">
+                                <span class="font-bold text-sky-800"><i class="fa-solid fa-circle-info mr-1"></i>解析：</span>${subQ.explanation}
+                            </div>
+                        </div>
+                    `;
+                });
+
                 container.innerHTML = `
-                    <h3 class="text-lg md:text-xl font-bold text-slate-800 mb-4 whitespace-pre-line">${currentIndex + 1}. （是非題）${qData.q}</h3>
+                    <div class="bg-amber-50 border-l-4 border-amber-500 rounded-r-xl p-4 md:p-5 space-y-2 shadow-sm">
+                        <div class="inline-block px-2.5 py-1 bg-amber-500 text-white text-xs font-bold rounded-md mb-1">
+                            <i class="fa-solid fa-book-open-reader mr-1"></i>${qData.title}
+                        </div>
+                        <p class="text-slate-800 leading-relaxed whitespace-pre-line font-medium text-base md:text-lg">${qData.passage}</p>
+                    </div>
+                    <div class="space-y-4 pt-2">
+                        ${subQuestionsHtml}
+                    </div>
+                `;
+            } 
+            // 2. 處理一般是非題 (TF)
+            else if (qData.type === "TF") {
+                container.innerHTML = `
+                    <h3 class="text-lg md:text-xl font-bold text-slate-800 mb-4 whitespace-pre-line">（是非題）${qData.q}</h3>
                     <div class="space-y-3">
-                        <button onclick="checkAnswer(true, this)" class="w-full text-left p-4 bg-slate-50 hover:bg-blue-50 border border-slate-200 rounded-xl font-medium text-slate-700 transition flex items-center gap-3">
+                        <button onclick="checkSingleAnswer(true, this)" class="w-full text-left p-4 bg-slate-50 hover:bg-blue-50 border border-slate-200 rounded-xl font-medium text-slate-700 transition flex items-center gap-3">
                             <span class="w-8 h-8 rounded-full bg-white border border-slate-300 flex items-center justify-center font-bold text-slate-500 shrink-0">○</span> 正確 (O)
                         </button>
-                        <button onclick="checkAnswer(false, this)" class="w-full text-left p-4 bg-slate-50 hover:bg-blue-50 border border-slate-200 rounded-xl font-medium text-slate-700 transition flex items-center gap-3">
+                        <button onclick="checkSingleAnswer(false, this)" class="w-full text-left p-4 bg-slate-50 hover:bg-blue-50 border border-slate-200 rounded-xl font-medium text-slate-700 transition flex items-center gap-3">
                             <span class="w-8 h-8 rounded-full bg-white border border-slate-300 flex items-center justify-center font-bold text-slate-500 shrink-0">×</span> 錯誤 (X)
                         </button>
                     </div>
                 `;
-            } else {
+            } 
+            // 3. 處理一般選擇題 (MC)
+            else {
                 let optionsHtml = '';
                 qData.options.forEach((opt, idx) => {
                     optionsHtml += `
-                        <button onclick="checkAnswer(${idx}, this)" class="w-full text-left p-4 bg-slate-50 hover:bg-blue-50 border border-slate-200 rounded-xl font-medium text-slate-700 transition flex items-center gap-3">
+                        <button onclick="checkSingleAnswer(${idx}, this)" class="w-full text-left p-4 bg-slate-50 hover:bg-blue-50 border border-slate-200 rounded-xl font-medium text-slate-700 transition flex items-center gap-3">
                             <span class="w-8 h-8 rounded-full bg-white border border-slate-300 flex items-center justify-center font-bold text-slate-500 shrink-0">${idx + 1}</span> <span>${opt}</span>
                         </button>
                     `;
                 });
 
                 container.innerHTML = `
-                    <h3 class="text-lg md:text-xl font-bold text-slate-800 mb-4 whitespace-pre-line">${currentIndex + 1}. （選擇題）${qData.q}</h3>
+                    <h3 class="text-lg md:text-xl font-bold text-slate-800 mb-4 whitespace-pre-line">（選擇題）${qData.q}</h3>
                     <div class="space-y-3">
                         ${optionsHtml}
                     </div>
@@ -392,11 +541,12 @@
             }
         }
 
-        function checkAnswer(userAnswer, btnElement) {
-            if (selectedOption !== null) return;
-            selectedOption = userAnswer;
+        // 單題作答判定
+        function checkSingleAnswer(userAnswer, btnElement) {
+            if (answeredSubCountInCurrentItem > 0) return;
+            answeredSubCountInCurrentItem = 1;
 
-            const qData = currentQuizQuestions[currentIndex];
+            const qData = currentQuizItems[currentIndex];
             const isCorrect = (userAnswer === qData.ans);
 
             const buttons = document.querySelectorAll('#question-container button');
@@ -427,23 +577,64 @@
                 });
             }
 
-            // 顯示詳細解說
             document.getElementById('explanation-text').innerText = qData.explanation;
             document.getElementById('explanation-box').classList.remove('hidden');
 
-            document.getElementById('score-text').innerText = `答對：${correctCount} 題（目前得分：${getCurrentScore()} 分）`;
+            updateScoreBoard();
             document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        // 題組內各子題作答判定
+        function checkGroupSubAnswer(subIdx, userAnswer, btnElement) {
+            const qData = currentQuizItems[currentIndex];
+            const subQ = qData.subQuestions[subIdx];
+
+            const subButtons = document.querySelectorAll(`.sub-btn-${subIdx}`);
+            // 若該子題已作答過則不重複觸發
+            if (subButtons[0].disabled) return;
+            subButtons.forEach(btn => btn.disabled = true);
+
+            const isCorrect = (userAnswer === subQ.ans);
+            if (isCorrect) {
+                correctCount++;
+                btnElement.classList.remove('bg-slate-50', 'hover:bg-blue-50');
+                btnElement.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-800');
+                btnElement.querySelector('span').classList.add('bg-emerald-500', 'text-white');
+            } else {
+                btnElement.classList.remove('bg-slate-50', 'hover:bg-blue-50');
+                btnElement.classList.add('bg-rose-100', 'border-rose-500', 'text-rose-800');
+                btnElement.querySelector('span').classList.add('bg-rose-500', 'text-white');
+
+                subButtons.forEach((btn, idx) => {
+                    if (idx === subQ.ans) {
+                        btn.classList.remove('bg-slate-50');
+                        btn.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-800');
+                    }
+                });
+            }
+
+            // 顯示該小題專屬詳解
+            document.getElementById(`sub-exp-${subIdx}`).classList.remove('hidden');
+
+            answeredSubCountInCurrentItem++;
+            updateScoreBoard();
+
+            // 當題組內所有小題皆作答完畢，顯示「下一頁」按鈕
+            if (answeredSubCountInCurrentItem === qData.subQuestions.length) {
+                document.getElementById('next-btn').classList.remove('hidden');
+            }
         }
 
         function nextQuestion() {
             currentIndex++;
-            if (currentIndex < currentQuizQuestions.length) {
+            if (currentIndex < currentQuizItems.length) {
                 loadQuestion();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
                 document.getElementById('quiz-screen').classList.add('hidden');
                 document.getElementById('result-screen').classList.remove('hidden');
                 document.getElementById('final-score').innerText = `您的總得分：${getCurrentScore()} 分`;
-                document.getElementById('final-detail').innerText = `共挑戰 ${currentQuizQuestions.length} 題，答對 ${correctCount} 題`;
+                document.getElementById('final-detail').innerText = `共完成 ${totalSubQuestionsCount} 題（含閱讀素養題組），答對 ${correctCount} 題`;
             }
         }
 
